@@ -1,3 +1,5 @@
+const props = PropertiesService.getScriptProperties();
+
 // Spreadsheet IDs
 const AU_SPREADSHEET_ID = '13tfUY6hU2bvrFT3UbZ8lF3jUk9Sjhkv8NqVKpRoXy-s';
 const NZ_SPREADSHEET_ID = '15clDS6MPlXD49XhXfEOu7xLR-XUoOc8qa27U6djmqIo';
@@ -23,14 +25,14 @@ const REGION_CONFIG = {
   AU: {
     spreadsheetID: AU_SPREADSHEET_ID,
     gDocURL: 'https://docs.google.com/spreadsheets/d/13tfUY6hU2bvrFT3UbZ8lF3jUk9Sjhkv8NqVKpRoXy-s/',
-    webhookURL: 'https://hooks.slack.com/services/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',
+    webhookURL: props.getProperty(Webhook_URL_AU),
     locations: ["Melbourne", "Sydney", "Brisbane", "Canberra", "Singapore"],
     timezone: 'Australia/Melbourne'
   },
   NZ: {
     spreadsheetID: NZ_SPREADSHEET_ID,
     gDocURL: 'https://docs.google.com/spreadsheets/d/15clDS6MPlXD49XhXfEOu7xLR-XUoOc8qa27U6djmqIo/',
-    webhookURL: 'https://hooks.slack.com/services/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',
+    webhookURL: '',
     locations: ["Auckland", "Wellington", "Hawkes Bay"],
     timezone: 'Pacific/Auckland'
   },
