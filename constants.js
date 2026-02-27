@@ -25,7 +25,7 @@ const REGION_CONFIG = {
   AU: {
     spreadsheetID: AU_SPREADSHEET_ID,
     gDocURL: 'https://docs.google.com/spreadsheets/d/13tfUY6hU2bvrFT3UbZ8lF3jUk9Sjhkv8NqVKpRoXy-s/',
-    webhookURL: props.getProperty(Webhook_URL_AU),
+    webhookURL: props.getProperty("Webhook_URL_AU"),
     locations: ["Melbourne", "Sydney", "Brisbane", "Canberra", "Singapore"],
     timezone: 'Australia/Melbourne'
   },
