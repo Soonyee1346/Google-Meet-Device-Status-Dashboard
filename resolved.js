@@ -36,8 +36,6 @@ function markAsResolved(location) {
               serial,
               location,
               peripheral,
-              issueOpenedDate,
-              issueClosedDate,
               issueID
             } = extractProperties(body);
 

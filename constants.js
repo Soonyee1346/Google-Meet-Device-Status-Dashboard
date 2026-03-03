@@ -3,8 +3,8 @@ const props = PropertiesService.getScriptProperties();
 // Spreadsheet IDs
 const AU_SPREADSHEET_ID = '13tfUY6hU2bvrFT3UbZ8lF3jUk9Sjhkv8NqVKpRoXy-s';
 const NZ_SPREADSHEET_ID = '15clDS6MPlXD49XhXfEOu7xLR-XUoOc8qa27U6djmqIo';
-const UK_SPREADSHEET_ID = '';
-const US_SPREADSHEET_ID = '';
+const UK_SPREADSHEET_ID = '1DUySU0SokCu38eCUDHrSZ6o_coXd4NsR4iKpf1TFxao';
+const US_SPREADSHEET_ID = '1cMoCJd9-KMcc7GJF5dqOuDBho2QWDO_Kw0aTf6TuT9c';
 const LOGS_SPREADSHEET_ID = '1VhTxdblFpv71-z7LoPe3vynIbJyZ3yrItyK20XzhKMk';
 const TEST_SPREADSHEET_ID = '1-DNxFsrqYtKHu93e2PvC6qLFgqsL8ES3Z0vyn-2M5LA'
 
@@ -38,16 +38,16 @@ const REGION_CONFIG = {
   },
   UK: {
     spreadsheetID: UK_SPREADSHEET_ID,
-    gDocURL: '',
+    gDocURL: 'https://docs.google.com/spreadsheets/d/1DUySU0SokCu38eCUDHrSZ6o_coXd4NsR4iKpf1TFxao',
     webhookURL: '',
-    locations: [''],
+    locations: ["London", "Milton Keynes", "Manchester"],
     timezone: 'Europe/London'
   },
   US: {
     spreadsheetID: US_SPREADSHEET_ID,
-    gDocURL: '',
+    gDocURL: 'https://docs.google.com/spreadsheets/d/1cMoCJd9-KMcc7GJF5dqOuDBho2QWDO_Kw0aTf6TuT9c/',
     webhookURL: '',
-    locations: [''],
+    locations: ["San Mateo", "New York", "Denver", "Toronto", "Calgary"],
     timezone: 'America/Denver'
   }
 }
