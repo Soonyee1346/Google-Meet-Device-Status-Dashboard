@@ -143,8 +143,8 @@ function processMeetHardwareStatus() {
 
     if (processedIDs.has(issueID)) {
       sheet.getRange(rowIndex, col).clearContent().setBackground("#00fc00");
-      thread.removeLabel(closedLabel)
-      thread.addLabel(openedLabel);
+      thread.removeLabel(openedLabel)
+      thread.addLabel(closedLabel);
       thread.moveToArchive();
       Logger.log(serial + " has been resolved.");
       timeStamp = issueClosedDate;
