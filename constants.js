@@ -9,13 +9,8 @@ const LOGS_SPREADSHEET_ID = '1VhTxdblFpv71-z7LoPe3vynIbJyZ3yrItyK20XzhKMk';
 const TEST_SPREADSHEET_ID = '1-DNxFsrqYtKHu93e2PvC6qLFgqsL8ES3Z0vyn-2M5LA'
 
 // Labels
-// Create Label for threads that are closed
 const CLOSED_LABEL_NAME = "MeetAlert-Processed";
-const CLOSED_LABEL = getOrCreateLabel(CLOSED_LABEL_NAME);
-
-// Create Label for threads that are opened
 const OPENED_LABEL_NAME = "MeetAlert-Opened";
-const OPENED_LABEL = getOrCreateLabel(OPENED_LABEL_NAME);
 
 // All Locations
 const LOCATIONS = ["Melbourne", "Sydney", "Brisbane", "Canberra", "Singapore", "Auckland", "Wellington", "Hawkes Bay"];

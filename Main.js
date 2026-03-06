@@ -13,24 +13,34 @@ function processMeetHardwareStatus() {
   threads.forEach(thread => {
     const messages = thread.getMessages();
     const labels = thread.getLabels();
+    
+    // Get the Issue ID from the VERY FIRST message in the thread
+    // This ensures we have the ID even if 'closed' emails omit it
+    const firstMessageBody = messages[0].getPlainBody();
+    const firstMsgProperties = extractProperties(firstMessageBody);
+    const threadIssueID = firstMsgProperties.issueID;
+
+    if (!threadIssueID) return; // Skip if we can't identify the issue
 
     for (const message of messages){
       const body = message.getPlainBody();
       const closedMatch = body.match(/Issue closed:\s*(.*)/i);
-      const issueidMatch = body.match(/Issue id:\s*(\d+)/i);
 
-      if(closedMatch && issueidMatch){
-        const issueID = issueidMatch[1].trim();
-        // Checking if thread doesn't have a closed message
-        if (labels && labels.length > 0 && messages.length == 1 && labels[0].getName() == OPENED_LABEL_NAME) {
-          processedOpenIDs.add(issueID); // Adding already opened IDs to Opened Set
-        }
-        if(!closedMatch[1].toLowerCase().includes("ongoing")){
-          processedIDs.add(issueID);
+      // 1. Check for 'Opened' status
+      // If thread has only 1 message and is labeled 'Opened', track it
+      if (messages.length === 1 && labels.some(l => l.getName() === OPENED_LABEL_NAME)) {
+        processedOpenIDs.add(threadIssueID);
+      }
+
+      // 2. Check for 'Closed' status
+      if (closedMatch) {
+        // Only mark as processed if it's a real closure (not 'ongoing')
+        if (!closedMatch[1].toLowerCase().includes("ongoing")) {
+          processedIDs.add(threadIssueID);
         }
       }
     }
-  })
+  });
 
   const logSheet = SpreadsheetApp.openById(LOGS_SPREADSHEET_ID).getSheetByName('Logs');
   const processedLogSheet = SpreadsheetApp.openById(LOGS_SPREADSHEET_ID).getSheetByName('ProcessedLogs');
@@ -128,11 +138,13 @@ function processMeetHardwareStatus() {
     if (!col) return;
 
     let timeStamp = '';
+    const closedLabel = getOrCreateLabel(CLOSED_LABEL_NAME);
+    const openedLabel = getOrCreateLabel(OPENED_LABEL_NAME);
 
     if (processedIDs.has(issueID)) {
       sheet.getRange(rowIndex, col).clearContent().setBackground("#00fc00");
-      thread.removeLabel(OPENED_LABEL)
-      thread.addLabel(CLOSED_LABEL);
+      thread.removeLabel(closedLabel)
+      thread.addLabel(openedLabel);
       thread.moveToArchive();
       Logger.log(serial + " has been resolved.");
       timeStamp = issueClosedDate;
@@ -141,7 +153,7 @@ function processMeetHardwareStatus() {
       sheet.getRange(rowIndex, col).setBackground("#fc0000").setValue(regionalTime);
       Logger.log("Issue for " + serial + " has been opened.");
       timeStamp = issueOpenedDate;
-      thread.addLabel(OPENED_LABEL)
+      thread.addLabel(openedLabel)
     }
 
     // Log all issues to Meet Device Status Logs
