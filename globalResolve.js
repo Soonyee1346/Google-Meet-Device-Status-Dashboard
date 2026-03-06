@@ -7,42 +7,53 @@ function globalResolve() {
   if (!currentOpenSheet) throw new Error(`Sheet not found: CurrentOpenIssues`);
   const currentOpenData = currentOpenSheet.getDataRange().getValues();
 
+  let issuesToResolve = [];
+
   for (let i = 1; i < currentOpenData.length; i++) {
     let row = currentOpenData[i];
-
     if (row[7] == "TRUE" || row[7] == true) {
-      let location = row[1];
-      let room = row[2];
-      let serial = row[3];
-      let peripheral = row[4];
-      let issueID = row[5];
-      const closedLabel = getOrCreateLabel(CLOSED_LABEL_NAME);
-      const openedLabel = getOrCreateLabel(OPENED_LABEL_NAME);
-      const query = `label:inbox -label:${CLOSED_LABEL_NAME} subject:"${issueID}"`;
-      const threads = GmailApp.search(query);
-
-      if (threads.length <= 0) {
-        Logger.log("Alert has been archived");
-      } else {
-        let timeStamp = Utilities.formatDate(new Date(), "Australia/Melbourne", "MM/dd/yyyy HH:mm:ss").trim();
-
-        threads.forEach(thread => {
-          Logger.log(`Archiving ${issueID} email thread`);
-          thread.addLabel(closedLabel);
-          thread.removeLabel(openedLabel);
-          thread.moveToArchive();
-        });
-
-        createLog(processedSet, processedLogSheet, logSheet, timeStamp, location, room, serial, peripheral, issueID, "Closed");
-        Logger.log("Closing issue: " + issueID);
-      }
-
-      //Edit the Dashboard
-      syncToRegionalSheet(location, room, "Resolve")
+      issuesToResolve.push({
+        location: row[1],
+        room: row[2],
+        serial: row[3],
+        peripheral: row[4],
+        issueID: row[5]
+      });
     }
   }
 
-  Logger.log("globalResolve done.")
+  // Only call Gmail if there is actually work to do
+  if (issuesToResolve.length > 0) {
+    Logger.log(`Issues to resolve: ${issuesToResolve.length}`);
+    const closedLabel = getOrCreateLabel(CLOSED_LABEL_NAME);
+    const openedLabel = getOrCreateLabel(OPENED_LABEL_NAME);
+
+    // Batch query
+    const idQueries = issuesToResolve.map(issue => `subject:"${issue.issueID}"`).join(" OR ");
+    const query = `label:inbox -label:${CLOSED_LABEL_NAME} (${idQueries})`;
+    const threads = GmailApp.search(query); 
+    
+    let timeStamp = Utilities.formatDate(new Date(), "Australia/Melbourne", "MM/dd/yyyy HH:mm:ss").trim();
+    
+    // Handle threads
+    threads.forEach(thread => {
+      thread.addLabel(closedLabel);
+      thread.removeLabel(openedLabel);
+      thread.moveToArchive();
+      thread.markRead();
+    });
+
+    // Log
+    issuesToResolve.forEach(issue => {
+      createLog(processedSet, processedLogSheet, logSheet, timeStamp, issue.location, issue.room, issue.serial, issue.peripheral, issue.issueID, "Closed");
+      syncToRegionalSheet(issue.location, issue.room, "Resolve");
+      Logger.log("Closed and Synced issue: " + issue.issueID);
+    });
+  } else {
+    Logger.log("No issues to resolve");
+  }
+
+  Logger.log("globalResolve done.");
 }
 
 function syncToRegionalSheet(locationName, roomName, action) {

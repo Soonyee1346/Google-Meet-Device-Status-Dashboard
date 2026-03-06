@@ -1,7 +1,7 @@
 function processMeetHardwareStatus() {
 
   // Only emails that are in inbox and have specific subject line
-  const query = `label:inbox -label:${CLOSED_LABEL_NAME} subject:"Google Meet hardware" subject:"Issue id"`; 
+  const query = `is:unread label:inbox -label:${CLOSED_LABEL_NAME} subject:"Google Meet hardware" subject:"Issue id"`;
   const threads = GmailApp.search(query);
 
   const sheetsCache = new Map(); // Cache sheet objects and data
@@ -13,7 +13,7 @@ function processMeetHardwareStatus() {
   threads.forEach(thread => {
     const messages = thread.getMessages();
     const labels = thread.getLabels();
-    
+
     // Get the Issue ID from the VERY FIRST message in the thread
     // This ensures we have the ID even if 'closed' emails omit it
     const firstMessageBody = messages[0].getPlainBody();
@@ -22,7 +22,7 @@ function processMeetHardwareStatus() {
 
     if (!threadIssueID) return; // Skip if we can't identify the issue
 
-    for (const message of messages){
+    for (const message of messages) {
       const body = message.getPlainBody();
       const closedMatch = body.match(/Issue closed:\s*(.*)/i);
 
@@ -53,21 +53,21 @@ function processMeetHardwareStatus() {
     const latestMessage = messages[messages.length - 1];
     const body = latestMessage.getPlainBody();
     let {
-      roomName, 
-      serial, 
-      location, 
-      peripheral, 
-      issueOpenedDate, 
-      issueClosedDate, 
+      roomName,
+      serial,
+      location,
+      peripheral,
+      issueOpenedDate,
+      issueClosedDate,
       issueID
     } = extractProperties(body);
 
-    if(processedOpenIDs.has(issueID) && !processedIDs.has(issueID)){ // If already opened, with no closed message return.
+    if (processedOpenIDs.has(issueID) && !processedIDs.has(issueID)) { // If already opened, with no closed message return.
       Logger.log(`${thread.getFirstMessageSubject()} is already open and not closed. Skipping.`);
       return;
     }
 
-    if(location.includes("'")){
+    if (location.includes("'")) {
       location = location.replace(/'/g, "");
     }
 
@@ -80,8 +80,8 @@ function processMeetHardwareStatus() {
 
     const locationInfo = getLocation(location); // Gets regional object REGION_CONFIG
 
-    if(!locationInfo) return;
-    
+    if (!locationInfo) return;
+
     const sheetName = `${location} Meet Device Status`;
 
     Logger.log("Editing sheet: " + sheetName);
@@ -99,7 +99,7 @@ function processMeetHardwareStatus() {
 
     // Find or create row based off room name
     let rowIndex = sheetData.findIndex(row => row[2] === roomName) + 1;
-    
+
     // If no entry is found, create a row
     if (rowIndex === 0) {
       sheet.appendRow([serial, "", roomName, "", "", "", "", "", "", ""]);
@@ -116,7 +116,7 @@ function processMeetHardwareStatus() {
         );
       }
 
-      for(let check = 11; check < 13; check++){
+      for (let check = 11; check < 13; check++) {
         sheet.getRange(rowIndex, check).insertCheckboxes();
         sheet.getRange(rowIndex, check).setValue(false);
         sheet.getRange(rowIndex, check).setBorder(
@@ -142,18 +142,24 @@ function processMeetHardwareStatus() {
     const openedLabel = getOrCreateLabel(OPENED_LABEL_NAME);
 
     if (processedIDs.has(issueID)) {
+      // THE ISSUE IS CLOSED
       sheet.getRange(rowIndex, col).clearContent().setBackground("#00fc00");
-      thread.removeLabel(openedLabel)
+      thread.removeLabel(openedLabel);
       thread.addLabel(closedLabel);
       thread.moveToArchive();
+      thread.markRead()
+
       Logger.log(serial + " has been resolved.");
       timeStamp = issueClosedDate;
     } else {
+      // THE ISSUE IS OPEN
       let regionalTime = Utilities.formatDate(issueOpenedDate, locationInfo.timezone, "dd-MM-yyyy HH:mm:ss");
       sheet.getRange(rowIndex, col).setBackground("#fc0000").setValue(regionalTime);
+      thread.addLabel(openedLabel);
+      thread.markRead();
+
       Logger.log("Issue for " + serial + " has been opened.");
       timeStamp = issueOpenedDate;
-      thread.addLabel(openedLabel)
     }
 
     // Log all issues to Meet Device Status Logs
