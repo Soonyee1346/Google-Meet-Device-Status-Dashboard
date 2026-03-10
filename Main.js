@@ -1,7 +1,7 @@
 function processMeetHardwareStatus() {
 
   // Only emails that are in inbox and have specific subject line
-  const query = `is:unread label:inbox -label:${CLOSED_LABEL_NAME} subject:"Google Meet hardware" subject:"Issue id"`;
+  const query = `is:unread -label:${CLOSED_LABEL_NAME} subject:"Google Meet hardware" subject:"Issue id"`;
   const threads = GmailApp.search(query);
 
   const sheetsCache = new Map(); // Cache sheet objects and data
