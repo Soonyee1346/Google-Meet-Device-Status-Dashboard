@@ -12,9 +12,16 @@ function createLog(processedSet, processedLogSheet, logSheet, timeStamp, locatio
     timeStamp,
     location,
     roomName,
-    serial,
+    "'" + serial,
     peripheral,
     issueID,
-    status
+    status,
+    "",
+    "",
+    ""
   ]);
+
+  const lastRow = logSheet.getLastRow();
+
+  logSheet.getRange(lastRow, 8, 1, 2).insertCheckboxes().setValue(false);
 }
