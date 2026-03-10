@@ -248,29 +248,47 @@
               </div>
             </div>
 
-          <div class="flex justify-center gap-4 p-4 bg-slate-50/30 border-t border-slate-100">
-            ${roomData.isIgnored 
-              ? `<button                   
-                  onclick='this.disabled=true; this.innerText="Processing..."; handleAction("Unignore", ${issueIDJSON}, "${roomData.location}", "${currentMacroRegion}", "${roomName}")' 
-                  class="w-full py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg font-black text-sm transition-all transform active:scale-[0.98] shadow-sm"
-                 >
-                  Ignored 🔕
-                 </button>` 
-              : `<button 
-                  onclick='this.disabled=true; this.innerText="Processing..."; handleAction("Ignore", ${issueIDJSON}, "${roomData.location}", "${currentMacroRegion}", "${roomName}")' 
-                  class="w-full py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg font-black text-sm transition-all transform active:scale-[0.98] shadow-sm"
-                 >
-                  Ignore Room 🔔
-                 </button>`
-            }
-            <button 
-              onclick='this.disabled=true; this.innerText="Processing..."; handleAction("Resolve", ${issueIDJSON}, "${roomData.location}", "${currentMacroRegion}", "${roomName}")'
-              class="w-full py-2.5 bg-slate-900 hover:bg-blue-600 text-white rounded-lg text-sm font-bold transition-all transform active:scale-[0.98] shadow-sm"
-            >
-              Resolve Room
-            </button>
+            <div class="bg-slate-50/30 border-t border-slate-100">
+              <div class="flex justify-between items-center px-4 pt-3 pb-1">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Actions</span>
+                
+                <div class="relative group/tooltip cursor-help">
+                  <svg class="w-4 h-4 text-slate-400 hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  
+                  <div class="absolute bottom-full right-[-8px] mb-2 w-64 bg-slate-900 text-white text-[11px] p-3 rounded-lg shadow-xl opacity-0 group-hover/tooltip:opacity-100 pointer-events-none transition-opacity z-20">
+                    <p><strong class="text-yellow-400">Ignore Room:</strong> Silences Slack notifications for this room, but leaves the issue open on this dashboard.</p>
+                    <p class="mb-2"><strong class="text-blue-400">Resolve Room:</strong> Closes the issue on this dashboard. Use if the room has no errors in Google Admin Console but is still appearing on this dashboard.</p>
+                    <div class="absolute top-full right-3 border-4 border-transparent border-t-slate-900"></div>
+                  </div>
+                </div>
+              </div>
+            
+              <div class="flex justify-center gap-4 px-4 pb-4 pt-1">
+                ${roomData.isIgnored 
+                  ? `<button                   
+                      onclick='this.disabled=true; this.innerText="Processing..."; handleAction("Unignore", ${issueIDJSON}, "${roomData.location}", "${currentMacroRegion}", "${roomName}")' 
+                      class="w-full py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg font-black text-sm transition-all transform active:scale-[0.98] shadow-sm"
+                    >
+                      Ignored 🔕
+                    </button>` 
+                  : `<button 
+                      onclick='this.disabled=true; this.innerText="Processing..."; handleAction("Ignore", ${issueIDJSON}, "${roomData.location}", "${currentMacroRegion}", "${roomName}")' 
+                      class="w-full py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg font-black text-sm transition-all transform active:scale-[0.98] shadow-sm"
+                    >
+                      Ignore Room 🔔
+                    </button>`
+                }
+                <button 
+                  onclick='this.disabled=true; this.innerText="Processing..."; handleAction("Resolve", ${issueIDJSON}, "${roomData.location}", "${currentMacroRegion}", "${roomName}")'
+                  class="w-full py-2.5 bg-slate-900 hover:bg-blue-600 text-white rounded-lg text-sm font-bold transition-all transform active:scale-[0.98] shadow-sm"
+                >
+                  Resolve Room
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
       `;
     }).join('');
   }

@@ -12,7 +12,7 @@ function createLog(processedSet, processedLogSheet, logSheet, timeStamp, locatio
     timeStamp,
     location,
     roomName,
-    serial,
+    "'" + serial,
     peripheral,
     issueID,
     status,

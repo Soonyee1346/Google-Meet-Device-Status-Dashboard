@@ -102,9 +102,9 @@ function processMeetHardwareStatus() {
 
     // If no entry is found, create a row
     if (rowIndex === 0) {
-      sheet.appendRow([serial, "", roomName, "", "", "", "", "", "", ""]);
-      sheetData = sheet.getDataRange().getValues(); // Refresh data
-      sheetsCache.set(sheetName, { sheet, data: sheetData }); // Update cache
+      sheet.appendRow(["'" + serial, "", roomName, "", "", "", "", "", "", ""]);
+      sheetData = sheet.getDataRange().getValues();
+      sheetsCache.set(sheetName, { sheet, data: sheetData });
       rowIndex = sheetData.findIndex(row => row[0] === serial) + 1;
 
       Logger.log(rowIndex);
@@ -126,11 +126,11 @@ function processMeetHardwareStatus() {
 
       Logger.log("New entry for " + serial + " has been created.")
     } else {
-      const existingSerial = sheetData[rowIndex - 1][0];
+      const existingSerial = String(sheetData[rowIndex - 1][0]); // Enforced String format
 
       // If serial number has changed, change serial
       if (existingSerial != serial) {
-        sheet.getRange(rowIndex, 1).setValue(serial);
+        sheet.getRange(rowIndex, 1).setValue("'" + serial); // Added apostrophe
       }
     }
 

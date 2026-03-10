@@ -29,18 +29,21 @@ function processRoomAction(actionType, issueIDs, location, region, roomName) {
   issueIDs.forEach(issueID => {
     const rowIndex = data.findIndex(row => row[5] == issueID) + 1;
 
-    if (actionType === "Resolve") {
-      logSheet.getRange(rowIndex, 9).setValue(true);
-    } else if (actionType === "Ignore") {
-      logSheet.getRange(rowIndex, 8).setValue(true);
-    } else if (actionType === "Unignore") {
-      logSheet.getRange(rowIndex, 8).clearContent(false);
+    if (rowIndex > 0) {
+      if (actionType === "Resolve") {
+        logSheet.getRange(rowIndex, 9).setValue(true);
+      } else if (actionType === "Ignore") {
+        logSheet.getRange(rowIndex, 8).setValue(true);
+      } else if (actionType === "Unignore") {
+        logSheet.getRange(rowIndex, 8).clearContent();
+      }
+    } else {
+      Logger.log(`Warning: Issue ID ${issueID} not found in Logs sheet.`);
     }
   });
 
   const targetSpreadsheetID = REGION_CONFIG[region].spreadsheetID;
-
-  const sheetName = location + " Meet Device Status"
+  const sheetName = location + " Meet Device Status";
 
   const regionSheet = SpreadsheetApp.openById(targetSpreadsheetID).getSheetByName(sheetName);
   if (!regionSheet) throw new Error(`Sheet not found: ${sheetName}`);
@@ -48,13 +51,17 @@ function processRoomAction(actionType, issueIDs, location, region, roomName) {
 
   let regionalRowIndex = regionData.findIndex(row => row[2] === roomName) + 1;
 
-  if (actionType === "Resolve") {
-    regionSheet.getRange(regionalRowIndex, 12).setValue(true);
-  } else if (actionType === "Ignore") {
-    regionSheet.getRange(regionalRowIndex, 11).setValue(true);
-  } else if (actionType === "Unignore") {
-    regionSheet.getRange(regionalRowIndex, 11).setValue(false);
-  };
+  if (regionalRowIndex > 0) {
+    if (actionType === "Resolve") {
+      regionSheet.getRange(regionalRowIndex, 12).setValue(true);
+    } else if (actionType === "Ignore") {
+      regionSheet.getRange(regionalRowIndex, 11).setValue(true);
+    } else if (actionType === "Unignore") {
+      regionSheet.getRange(regionalRowIndex, 11).setValue(false);
+    }
+  } else {
+    Logger.log(`Warning: Room ${roomName} not found in ${sheetName}.`);
+  }
 
   SpreadsheetApp.flush();
 }

@@ -47,7 +47,7 @@ function globalResolve() {
     issuesToResolve.forEach(issue => {
       createLog(processedSet, processedLogSheet, logSheet, timeStamp, issue.location, issue.room, issue.serial, issue.peripheral, issue.issueID, "Closed");
       syncToRegionalSheet(issue.location, issue.room, "Resolve");
-      Logger.log("Closed and Synced issue: " + issue.issueID);
+      Logger.log("Closed and Synced issue: " + issue.room + issue.issueID);
     });
   } else {
     Logger.log("No issues to resolve");
