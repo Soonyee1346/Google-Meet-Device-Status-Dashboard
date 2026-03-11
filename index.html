@@ -84,41 +84,66 @@
     </div>
   </main>
 
-  <div id="triggers-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm transition-opacity">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] border border-slate-200">
+  <div id="triggers-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm px-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] border border-slate-200">
       
-      <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
-        <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-          <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-          Alert Schedules
-        </h2>
-        <button onclick="closeTriggersModal()" class="text-slate-400 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md p-1 transition-colors">
+      <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white">
+        <div>
+          <h2 class="text-lg font-bold text-slate-800">Regional Alert Schedules</h2>
+          <p class="text-xs text-slate-500 font-medium italic">Configure automated Slack Alerts per region</p>
+        </div>
+        <button onclick="closeTriggersModal()" class="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-full transition-all">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
       </div>
-      
-      <div class="p-6 overflow-y-auto flex-grow bg-slate-50/50">
-        <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">Active Automated Alerts</h3>
+
+      <div class="p-6 overflow-y-auto bg-slate-50/50 flex-grow min-h-[300px]">
         <div id="triggers-list" class="space-y-3">
-          <div class="text-center text-slate-400 py-6 text-sm">Loading triggers...</div>
+          <div class="flex flex-col items-center justify-center py-12 text-slate-400 italic text-sm">
+            <div class="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full mb-3"></div>
+            Syncing with Google...
+          </div>
         </div>
       </div>
 
-      <div class="px-6 py-5 border-t border-slate-200 bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-        <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-3">Create New Schedule</h3>
-        <div class="flex gap-3 items-end">
-          <div class="flex-1">
-            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Target Region</label>
-            <select id="new-trigger-region" class="w-full text-sm font-medium bg-slate-50 border border-slate-200 text-slate-700 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
-              <option value="AU">AU Region</option>
-              <option value="NZ">NZ Region</option>
-              <option value="UK">UK Region</option>
-              <option value="US">US Region</option>
+      <div class="p-6 bg-white border-t border-slate-100 shadow-[0_-4px_15px_rgba(0,0,0,0.03)]">
+        <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Add New Schedule</h3>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 items-end">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Region</label>
+            <select id="new-trigger-region" class="w-full text-sm font-semibold bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none">
+              <option value="AU">AU</option>
+              <option value="NZ">NZ</option>
+              <option value="UK">UK</option>
+              <option value="US">US</option>
             </select>
           </div>
-          <div class="flex-1">
-            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Time (Local Timezone)</label>
-            <select id="new-trigger-hour" class="w-full text-sm font-medium bg-slate-50 border border-slate-200 text-slate-700 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Frequency</label>
+            <select id="new-trigger-frequency" onchange="handleFrequencyChange(this.value)" class="w-full text-sm font-semibold bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none">
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="fortnightly">Fortnightly</option>
+              <option value="monthly">Monthly</option>
+            </select>
+          </div>
+
+          <div id="day-selector-container" class="hidden">
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">On Day</label>
+            <select id="new-trigger-day" class="w-full text-sm font-semibold bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none">
+              <option value="MONDAY">Monday</option>
+              <option value="TUESDAY">Tuesday</option>
+              <option value="WEDNESDAY">Wednesday</option>
+              <option value="THURSDAY">Thursday</option>
+              <option value="FRIDAY">Friday</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">Time</label>
+            <select id="new-trigger-hour" class="w-full text-sm font-semibold bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none">
               <option value="8">8:00 AM</option>
               <option value="9">9:00 AM</option>
               <option value="12">12:00 PM</option>
@@ -126,12 +151,14 @@
               <option value="17">5:00 PM</option>
             </select>
           </div>
-          <button onclick="submitNewTrigger(this)" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-md transition-colors h-[38px] whitespace-nowrap active:scale-[0.98]">
-            + Add Alert
-          </button>
+
+          <div class="col-span-full mt-2">
+            <button id="add-trigger-btn" onclick="submitNewTrigger(this)" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98]">
+              + Add Schedule
+            </button>
+          </div>
         </div>
       </div>
-
     </div>
   </div>
 
@@ -449,41 +476,61 @@
       .updateRoomNotes(noteText, issueIDs);
   }
 
-  // ==========================================
-  // 6. TRIGGERS MODAL LOGIC
-  // ==========================================
   function openTriggersModal() {
     document.getElementById('triggers-modal').classList.remove('hidden');
-    loadActiveTriggers(); // Fetch the triggers immediately upon opening
+    loadActiveTriggers();
   }
 
   function closeTriggersModal() {
     document.getElementById('triggers-modal').classList.add('hidden');
   }
 
+  // Show/Hide the Day dropdown based on frequency
+  function handleFrequencyChange(val) {
+    const dayContainer = document.getElementById('day-selector-container');
+    if (val === 'weekly' || val === 'fortnightly') {
+      dayContainer.classList.remove('hidden');
+    } else {
+      dayContainer.classList.add('hidden');
+    }
+  }
+
   function loadActiveTriggers() {
-    const container = document.getElementById('triggers-list');
-    container.innerHTML = `<div class="text-center text-slate-400 py-6 text-sm"><div class="animate-spin inline-block w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full mr-2 align-middle"></div>Fetching from Google Servers...</div>`;
+    const list = document.getElementById('triggers-list');
+    list.innerHTML = `<div class="flex flex-col items-center justify-center py-12 text-slate-400 italic text-sm"><div class="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full mb-3"></div>Syncing with Google...</div>`;
     
     google.script.run
       .withSuccessHandler((triggers) => {
         if (!triggers || triggers.length === 0) {
-          container.innerHTML = `<div class="text-center text-slate-500 text-sm py-8 bg-white border border-slate-200 rounded-lg shadow-sm">No automated alerts are currently scheduled.</div>`;
+          list.innerHTML = `<div class="text-center py-10 text-slate-400 text-sm bg-white border border-slate-200 rounded-xl shadow-sm">No active alert schedules found.</div>`;
           return;
         }
-        
-        container.innerHTML = triggers.map(t => {
-          // Convert 24h time to 12h time for display
-          let timeDisplay = t.hour < 12 ? `${t.hour}:00 AM` : (t.hour == 12 ? `12:00 PM` : `${t.hour - 12}:00 PM`);
-          if (t.hour === 'Unknown') timeDisplay = 'Unknown Time';
+
+        list.innerHTML = triggers.map(t => {
+          // Parse the time and text for display
+          const hourNum = parseInt(t.hour);
+          const ampm = hourNum >= 12 ? 'PM' : 'AM';
+          const displayHour = hourNum % 12 || 12;
           
+          let dayInfo = "";
+          if (t.frequency === 'weekly' || t.frequency === 'fortnightly') {
+            dayInfo = ` on ${t.day.charAt(0) + t.day.slice(1).toLowerCase()}`;
+          } else if (t.frequency === 'monthly') {
+            dayInfo = " (1st of month)";
+          }
+
+          const displayFreq = t.frequency ? (t.frequency.charAt(0).toUpperCase() + t.frequency.slice(1)) : 'Daily';
+
           return `
-            <div class="flex justify-between items-center p-4 bg-white border border-slate-200 rounded-lg shadow-sm hover:border-blue-300 transition-colors">
-              <div class="flex items-center gap-4">
-                <span class="bg-blue-100 text-blue-700 px-2.5 py-1 rounded text-xs font-black tracking-widest">${t.region}</span>
-                <span class="text-sm font-bold text-slate-700">Runs daily at ${timeDisplay}</span>
+            <div class="flex justify-between items-center p-4 bg-white border border-slate-100 rounded-xl shadow-sm hover:border-blue-300 transition-colors">
+              <div class="flex items-center gap-3">
+                <span class="px-2 py-1 bg-blue-50 text-blue-600 text-[10px] font-black rounded-md border border-blue-100 tracking-widest">${t.region}</span>
+                <div class="flex flex-col">
+                  <span class="text-sm font-bold text-slate-700">${displayFreq}${dayInfo} at ${displayHour}:00 ${ampm}</span>
+                  <span class="text-[10px] text-slate-400 font-medium">Local ${t.region} Timezone</span>
+                </div>
               </div>
-              <button onclick="removeTrigger('${t.id}', this)" class="text-xs font-bold text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors px-3 py-1.5">
+              <button onclick="removeTrigger('${t.id}', this)" class="text-xs font-bold text-slate-400 hover:text-red-500 hover:bg-red-50 px-3 py-2 rounded-lg transition-all">
                 Delete
               </button>
             </div>
@@ -496,29 +543,45 @@
   function submitNewTrigger(btn) {
     const region = document.getElementById('new-trigger-region').value;
     const hour = document.getElementById('new-trigger-hour').value;
+    const frequency = document.getElementById('new-trigger-frequency').value;
+    const day = document.getElementById('new-trigger-day').value;
     
-    const originalText = btn.innerText;
-    btn.innerText = "Saving...";
+    btn.innerText = "Creating Schedule...";
     btn.disabled = true;
-    btn.classList.replace('bg-blue-600', 'bg-slate-400');
+    btn.classList.add('opacity-50', 'cursor-not-allowed');
     
     google.script.run
       .withSuccessHandler(() => {
-        btn.innerText = originalText;
+        btn.innerText = "+ Add Schedule";
         btn.disabled = false;
-        btn.classList.replace('bg-slate-400', 'bg-blue-600');
-        loadActiveTriggers(); // Refresh the list to show the new trigger
+        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+        loadActiveTriggers();
       })
-      .createAlertTrigger(region, hour);
+      .withFailureHandler((err) => {
+        alert("Failed to create schedule: " + err.message);
+        btn.innerText = "+ Add Schedule";
+        btn.disabled = false;
+        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+      })
+      .createActiveAlertTrigger(region, hour, day, frequency); 
   }
 
   function removeTrigger(triggerId, btn) {
+    if (!confirm("Are you sure you want to delete this alert schedule? Slack notifications for this region will stop at this time.")) {
+      return; 
+    }
+
     btn.innerText = "Deleting...";
     btn.disabled = true;
     
     google.script.run
       .withSuccessHandler(() => {
-        loadActiveTriggers(); // Refresh the list to remove the deleted trigger
+        loadActiveTriggers();
+      })
+      .withFailureHandler((err) => {
+        alert("Failed to delete trigger: " + err.message);
+        btn.innerText = "Delete";
+        btn.disabled = false;
       })
       .deleteAlertTrigger(triggerId);
   }
