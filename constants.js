@@ -12,8 +12,8 @@ const TEST_SPREADSHEET_ID = '1-DNxFsrqYtKHu93e2PvC6qLFgqsL8ES3Z0vyn-2M5LA'
 const CLOSED_LABEL_NAME = "MeetAlert-Processed";
 const OPENED_LABEL_NAME = "MeetAlert-Opened";
 
-// All Locations
-const LOCATIONS = ["Melbourne", "Sydney", "Brisbane", "Canberra", "Singapore", "Auckland", "Wellington", "Hawkes Bay"];
+// Dashboard URL
+const DASHBOARD_URL = "https://script.google.com/a/macros/xero.com/s/AKfycbxMwt0xashyq6MHOtooSuJLIlrY8ZfqiBrC5kYCeU7119YIaWG0rJYRjWywqfB-PWWEXw/exec";
 
 // Regional Config
 const REGION_CONFIG = {
@@ -34,7 +34,7 @@ const REGION_CONFIG = {
   UK: {
     spreadsheetID: UK_SPREADSHEET_ID,
     gDocURL: 'https://docs.google.com/spreadsheets/d/1DUySU0SokCu38eCUDHrSZ6o_coXd4NsR4iKpf1TFxao',
-    webhookURL: '',
+    webhookURL: props.getProperty("Webhook_URL_UK"),
     locations: ["London", "Milton Keynes", "Manchester"],
     timezone: 'Europe/London'
   },
